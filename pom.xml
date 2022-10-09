@@ -192,8 +192,6 @@
         <module>admin</module>
         <module>framework</module>
         <module>system</module>
-        <module>quartz</module>
-        <module>generator</module>
         <module>common</module>
     </modules>
     <packaging>pom</packaging>

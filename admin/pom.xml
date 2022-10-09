@@ -49,17 +49,17 @@
             <artifactId>framework</artifactId>
         </dependency>
 
-        <!-- 定时任务-->
-        <dependency>
-            <groupId>com.jagng</groupId>
-            <artifactId>quartz</artifactId>
-        </dependency>
+<!--        &lt;!&ndash; 定时任务&ndash;&gt;-->
+<!--        <dependency>-->
+<!--            <groupId>com.jagng</groupId>-->
+<!--            <artifactId>quartz</artifactId>-->
+<!--        </dependency>-->
 
-        <!-- 代码生成-->
-        <dependency>
-            <groupId>com.jagng</groupId>
-            <artifactId>generator</artifactId>
-        </dependency>
+<!--        &lt;!&ndash; 代码生成&ndash;&gt;-->
+<!--        <dependency>-->
+<!--            <groupId>com.jagng</groupId>-->
+<!--            <artifactId>generator</artifactId>-->
+<!--        </dependency>-->
 
     </dependencies>
 
