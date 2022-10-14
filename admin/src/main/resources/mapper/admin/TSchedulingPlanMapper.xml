@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jagng.admin.mapper.TSchedulingPlanMapper">
+    
+    <resultMap type="TSchedulingPlan" id="TSchedulingPlanResult">
+        <result property="id"    column="id"    />
+        <result property="empId"    column="emp_id"    />
+        <result property="planDate"    column="plan_date"    />
+        <result property="priority"    column="priority"    />
+        <result property="brandType"    column="brand_type"    />
+        <result property="brandTypeName"    column="brand_type_name"    />
+        <result property="empName"    column="emp_name"    />
+    </resultMap>
+
+    <sql id="selectTSchedulingPlanVo">
+        select id, emp_id, plan_date,  priority, brand_type from t_scheduling_plan
+    </sql>
+
+    <select id="selectTSchedulingPlanList" parameterType="TSchedulingPlan" resultMap="TSchedulingPlanResult">
+        select
+        tsp.id, tsp.emp_id, tsp.plan_date, tsp.priority, tsp.brand_type,tei.name as emp_name,sdt.dict_label as brand_type_name
+        from t_scheduling_plan tsp
+        left join t_emp_info tei on tei.id = tsp.emp_id
+        left join (select * from sys_dict_data sd where sd.dict_type = 'brand_type_dict' ) sdt on tsp.brand_type = sdt.dict_value
+        <where>  
+            <if test="empId != null  and empId != ''"> and emp_id = #{empId}</if>
+            <if test="planDate != null  and planDate != ''"> and plan_date = #{planDate}</if>
+            <if test="priority != null "> and priority = #{priority}</if>
+            <if test="brandType != null  and brandType != ''"> and brand_type = #{brandType}</if>
+        </where>
+        order by tsp.plan_date desc,tsp.brand_type asc ,tsp.priority asc
+    </select>
+    <select id="selectTSchedulingPlanById" parameterType="Integer" resultMap="TSchedulingPlanResult">
+        <include refid="selectTSchedulingPlanVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertTSchedulingPlan" parameterType="TSchedulingPlan">
+        insert into t_scheduling_plan
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="empId != null and empId != ''">emp_id,</if>
+            <if test="planDate != null and planDate != ''">plan_date,</if>
+            <if test="priority != null">priority,</if>
+            <if test="brandType != null and brandType != ''">brand_type,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="empId != null and empId != ''">#{empId},</if>
+            <if test="planDate != null and planDate != ''">#{planDate},</if>
+            <if test="priority != null">#{priority},</if>
+            <if test="brandType != null and brandType != ''">#{brandType},</if>
+         </trim>
+    </insert>
+
+    <update id="updateTSchedulingPlan" parameterType="TSchedulingPlan">
+        update t_scheduling_plan
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="empId != null and empId != ''">emp_id = #{empId},</if>
+            <if test="planDate != null and planDate != ''">plan_date = #{planDate},</if>
+            <if test="priority != null">priority = #{priority},</if>
+            <if test="brandType != null and brandType != ''">brand_type = #{brandType},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteTSchedulingPlanById" parameterType="Integer">
+        delete from t_scheduling_plan where id = #{id}
+    </delete>
+
+    <delete id="deleteTSchedulingPlanByIds" parameterType="Integer">
+        delete from t_scheduling_plan where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

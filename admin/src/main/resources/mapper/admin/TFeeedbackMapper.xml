@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jagng.admin.mapper.TFeeedbackMapper">
+    
+    <resultMap type="TFeeedback" id="TFeeedbackResult">
+        <result property="id"    column="id"    />
+        <result property="orderId"    column="order_id"    />
+        <result property="feedback"    column="feedback"    />
+        <result property="qualityLevel"    column="quality_level"    />
+    </resultMap>
+
+    <sql id="selectTFeeedbackVo">
+        select id, order_id, feedback, quality_level from t_feeedback
+    </sql>
+
+    <select id="selectTFeeedbackList" parameterType="TFeeedback" resultMap="TFeeedbackResult">
+        <include refid="selectTFeeedbackVo"/>
+        <where>  
+            <if test="orderId != null  and orderId != ''"> and order_id = #{orderId}</if>
+            <if test="feedback != null  and feedback != ''"> and feedback = #{feedback}</if>
+            <if test="qualityLevel != null "> and quality_level = #{qualityLevel}</if>
+        </where>
+    </select>
+    
+    <select id="selectTFeeedbackById" parameterType="String" resultMap="TFeeedbackResult">
+        <include refid="selectTFeeedbackVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertTFeeedback" parameterType="TFeeedback">
+        insert into t_feeedback
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="orderId != null and orderId != ''">order_id,</if>
+            <if test="feedback != null and feedback != ''">feedback,</if>
+            <if test="qualityLevel != null">quality_level,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="orderId != null and orderId != ''">#{orderId},</if>
+            <if test="feedback != null and feedback != ''">#{feedback},</if>
+            <if test="qualityLevel != null">#{qualityLevel},</if>
+         </trim>
+    </insert>
+
+    <update id="updateTFeeedback" parameterType="TFeeedback">
+        update t_feeedback
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="orderId != null and orderId != ''">order_id = #{orderId},</if>
+            <if test="feedback != null and feedback != ''">feedback = #{feedback},</if>
+            <if test="qualityLevel != null">quality_level = #{qualityLevel},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteTFeeedbackById" parameterType="String">
+        delete from t_feeedback where id = #{id}
+    </delete>
+
+    <delete id="deleteTFeeedbackByIds" parameterType="String">
+        delete from t_feeedback where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

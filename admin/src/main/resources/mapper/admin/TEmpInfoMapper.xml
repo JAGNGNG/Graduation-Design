@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jagng.admin.mapper.TEmpInfoMapper">
+    
+    <resultMap type="TEmpInfo" id="TEmpInfoResult">
+        <result property="id"    column="id"    />
+        <result property="name"    column="name"    />
+        <result property="sex"    column="sex"    />
+        <result property="deptId"    column="dept_id"    />
+        <result property="phone"    column="phone"    />
+        <result property="base"    column="base"    />
+        <result property="commission"    column="commission"    />
+        <result property="entryTime"    column="entry_time"    />
+        <result property="birthday"    column="birthday"    />
+        <result property="deptName"    column="dept_name"    />
+    </resultMap>
+
+    <sql id="selectTEmpInfoVo">
+        select id, name, sex, dept_id, phone, base, commission, entry_time, birthday from t_emp_info
+    </sql>
+
+    <select id="selectTEmpInfoList" parameterType="java.util.Map" resultMap="TEmpInfoResult">
+        select
+        emp.id, emp.name, emp.sex, emp.dept_id, emp.phone, emp.base, emp.commission, emp.entry_time, emp.birthday,dept.dept_name
+        from t_emp_info emp
+        left join  sys_dept dept on dept.dept_id = emp.dept_id
+        <where>  
+            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+            <if test="sex != null  and sex != ''"> and sex = #{sex}</if>
+            <if test="deptId != null  and deptId != ''"> and exists (select 1 from sys_dept sd where sd.dept_id = emp.dept_id and (find_in_set(#{deptId},sd.ancestors) or  sd.dept_id = #{deptId})) </if>
+            <if test="phone != null  and phone != ''"> and phone = #{phone}</if>
+            <if test="base != null "> and base = #{base}</if>
+            <if test="commission != null "> and commission = #{commission}</if>
+            <if test="entryTime != null  and entryTime != ''"> and entry_time = #{entryTime}</if>
+            <if test="birthday != null  and birthday != ''"> and birthday = #{birthday}</if>
+            <if test="params.beginTime != null  and params.beginTime != ''"> and entry_time <![CDATA[ >= ]]> #{params.beginTime}</if>
+            <if test="params.endTime != null  and params.endTime != ''"> and entry_time <![CDATA[ <= ]]> #{params.endTime}</if>
+        </where>
+    </select>
+    
+    <select id="selectTEmpInfoById" parameterType="java.lang.Integer" resultMap="TEmpInfoResult">
+        <include refid="selectTEmpInfoVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertTEmpInfo" parameterType="TEmpInfo">
+        insert into t_emp_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="name != null and name != ''">name,</if>
+            <if test="sex != null and sex != ''">sex,</if>
+            <if test="deptId != null and deptId != ''">dept_id,</if>
+            <if test="phone != null and phone != ''">phone,</if>
+            <if test="base != null">base,</if>
+            <if test="commission != null">commission,</if>
+            <if test="entryTime != null and entryTime != ''">entry_time,</if>
+            <if test="birthday != null and birthday != ''">birthday,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="name != null and name != ''">#{name},</if>
+            <if test="sex != null and sex != ''">#{sex},</if>
+            <if test="deptId != null and deptId != ''">#{deptId},</if>
+            <if test="phone != null and phone != ''">#{phone},</if>
+            <if test="base != null">#{base},</if>
+            <if test="commission != null">#{commission},</if>
+            <if test="entryTime != null and entryTime != ''">#{entryTime},</if>
+            <if test="birthday != null and birthday != ''">#{birthday},</if>
+         </trim>
+    </insert>
+
+    <update id="updateTEmpInfo" parameterType="TEmpInfo">
+        update t_emp_info
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="name != null and name != ''">name = #{name},</if>
+            <if test="sex != null and sex != ''">sex = #{sex},</if>
+            <if test="deptId != null and deptId != ''">dept_id = #{deptId},</if>
+            <if test="phone != null and phone != ''">phone = #{phone},</if>
+            <if test="base != null">base = #{base},</if>
+            <if test="commission != null">commission = #{commission},</if>
+            <if test="entryTime != null and entryTime != ''">entry_time = #{entryTime},</if>
+            <if test="birthday != null and birthday != ''">birthday = #{birthday},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteTEmpInfoById" parameterType="java.lang.Integer">
+        delete from t_emp_info where id = #{id}
+    </delete>
+
+    <delete id="deleteTEmpInfoByIds" parameterType="java.lang.Integer">
+        delete from t_emp_info where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="selectEmpInfoDTO" parameterType="java.lang.String" resultType="com.jagng.admin.dto.EmpInfoDTO">
+        select
+            su.user_id as userId ,
+            sp.post_name as postName,
+            sp.post_code as postCode
+        from sys_user_post sup
+        left join sys_user su on su.user_id = sup.user_id
+        left join sys_post sp on sp.post_id = sup.post_id
+        where su.phonenumber = #{phone}
+    </select>
+</mapper>

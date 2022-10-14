@@ -83,4 +83,5 @@ public class Seq
         // 转字符串，用0左补齐
         return StringUtils.padl(value, length);
     }
+
 }

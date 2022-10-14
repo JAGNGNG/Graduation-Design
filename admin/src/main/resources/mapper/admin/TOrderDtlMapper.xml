@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jagng.admin.mapper.TOrderDtlMapper">
+    
+    <resultMap type="TOrderDtl" id="TOrderDtlResult">
+        <result property="id"    column="id"    />
+        <result property="orderNo"    column="order_no"    />
+        <result property="wareCode"    column="ware_code"    />
+        <result property="wareNum"    column="ware_num"    />
+        <result property="detailedAmount"    column="detailed_amount"    />
+        <result property="empId"    column="emp_id"    />
+        <result property="commission"    column="commission"    />
+        <result property="empName"    column="emp_name"    />
+        <result property="wareName"    column="ware_name"    />
+    </resultMap>
+
+    <sql id="selectTOrderDtlVo">
+        select id, order_no, ware_code, ware_num, detailed_amount, emp_id, commission from t_order_dtl
+    </sql>
+
+    <select id="selectTOrderDtlList" parameterType="TOrderDtl" resultMap="TOrderDtlResult">
+        select
+            tod.id, tod.order_no, tod.ware_code, tod.ware_num, tod.detailed_amount, tod.emp_id, tod.commission,tei.name as emp_name,tw.ware_name
+        from t_order_dtl tod
+        left join t_emp_info tei on tei.id = tod.emp_id
+        left join t_ware tw on tw.ware_code = tod.ware_code
+        <where>  
+            <if test="orderNo != null  and orderNo != ''"> and order_no like concat('%',concat(#{orderNo},'%')) </if>
+            <if test="wareCode != null  and wareCode != ''"> and tod.ware_code = #{wareCode}</if>
+            <if test="wareNum != null "> and ware_num = #{wareNum}</if>
+            <if test="detailedAmount != null "> and detailed_amount = #{detailedAmount}</if>
+            <if test="empId != null  and empId != ''"> and emp_id = #{empId}</if>
+            <if test="commission != null "> and commission = #{commission}</if>
+        </where>
+        order by tod.order_no desc
+    </select>
+    
+    <select id="selectTOrderDtlById" parameterType="String" resultMap="TOrderDtlResult">
+        <include refid="selectTOrderDtlVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertTOrderDtl" parameterType="TOrderDtl">
+        insert into t_order_dtl
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="orderNo != null and orderNo != ''">order_no,</if>
+            <if test="wareCode != null and wareCode != ''">ware_code,</if>
+            <if test="wareNum != null">ware_num,</if>
+            <if test="detailedAmount != null">detailed_amount,</if>
+            <if test="empId != null and empId != ''">emp_id,</if>
+            <if test="commission != null">commission,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="orderNo != null and orderNo != ''">#{orderNo},</if>
+            <if test="wareCode != null and wareCode != ''">#{wareCode},</if>
+            <if test="wareNum != null">#{wareNum},</if>
+            <if test="detailedAmount != null">#{detailedAmount},</if>
+            <if test="empId != null and empId != ''">#{empId},</if>
+            <if test="commission != null">#{commission},</if>
+         </trim>
+    </insert>
+
+    <update id="updateTOrderDtl" parameterType="TOrderDtl">
+        update t_order_dtl
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="orderNo != null and orderNo != ''">order_no = #{orderNo},</if>
+            <if test="wareCode != null and wareCode != ''">ware_code = #{wareCode},</if>
+            <if test="wareNum != null">ware_num = #{wareNum},</if>
+            <if test="detailedAmount != null">detailed_amount = #{detailedAmount},</if>
+            <if test="empId != null and empId != ''">emp_id = #{empId},</if>
+            <if test="commission != null">commission = #{commission},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteTOrderDtlById" parameterType="String">
+        delete from t_order_dtl where id = #{id}
+    </delete>
+
+    <delete id="deleteTOrderDtlByIds" parameterType="String">
+        delete from t_order_dtl where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

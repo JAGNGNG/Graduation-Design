@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jagng.admin.mapper.TMemberBalanceMapper">
+    
+    <resultMap type="TMemberBalance" id="TMemberBalanceResult">
+        <result property="id"    column="id"    />
+        <result property="memberId"    column="member_id"    />
+        <result property="changeAmount"    column="change_amount"    />
+        <result property="changeTime"    column="change_time"    />
+        <result property="changeDirection"    column="change_direction"    />
+        <result property="orderId"    column="order_id"    />
+        <result property="orderNo"    column="order_no"    />
+        <result property="tradeAmount"    column="trade_amount"    />
+        <result property="memberName"    column="member_name"    />
+        <result property="phone"    column="phone"    />
+    </resultMap>
+
+    <sql id="selectTMemberBalanceVo">
+        select id, member_id, change_amount, change_time, change_direction, order_id, trade_amount,order_no from t_member_balance
+    </sql>
+
+    <select id="selectTMemberBalanceList" parameterType="TMemberBalance" resultMap="TMemberBalanceResult">
+        select
+            tmb.id, tmb.member_id, tmb.change_amount, tmb.change_time, tmb.change_direction, tmb.order_id, tmb.trade_amount,tmb.order_no ,tm.customer_name as member_name,tm.phone
+        from t_member_balance tmb
+        left join t_member tm on tm.id = tmb.member_id
+        <where>  
+            <if test="memberId != null  and memberId != ''"> and member_id = #{memberId}</if>
+            <if test="changeAmount != null "> and change_amount = #{changeAmount}</if>
+            <if test="changeTime != null  and changeTime != ''"> and change_time = #{changeTime}</if>
+            <if test="changeDirection != null "> and change_direction = #{changeDirection}</if>
+            <if test="orderId != null  and orderId != ''"> and order_id = #{orderId}</if>
+            <if test="tradeAmount != null "> and trade_amount = #{tradeAmount}</if>
+            <if test="orderNo != null  and orderNo != ''"> and order_no like concat('%',concat(#{orderNo},'%')) </if>
+            <if test="params.beginTime != null  and params.beginTime != ''"> and change_time <![CDATA[ >= ]]> #{params.beginTime}</if>
+            <if test="params.endTime != null  and params.endTime != ''"> and change_time <![CDATA[ <= ]]> #{params.endTime}</if>
+        </where>
+    order by tmb.change_time desc
+    </select>
+    
+    <select id="selectTMemberBalanceById" parameterType="java.lang.Integer" resultMap="TMemberBalanceResult">
+        <include refid="selectTMemberBalanceVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertTMemberBalance" parameterType="TMemberBalance">
+        insert into t_member_balance
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="memberId != null and memberId != ''">member_id,</if>
+            <if test="changeAmount != null">change_amount,</if>
+            <if test="changeTime != null and changeTime != ''">change_time,</if>
+            <if test="changeDirection != null">change_direction,</if>
+            <if test="orderId != null">order_id,</if>
+            <if test="tradeAmount != null">trade_amount,</if>
+            <if test="orderNo != null  and orderNo != ''"> order_no,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="memberId != null and memberId != ''">#{memberId},</if>
+            <if test="changeAmount != null">#{changeAmount},</if>
+            <if test="changeTime != null and changeTime != ''">#{changeTime},</if>
+            <if test="changeDirection != null ">#{changeDirection},</if>
+            <if test="orderId != null">#{orderId},</if>
+            <if test="tradeAmount != null">#{tradeAmount},</if>
+            <if test="orderNo != null  and orderNo != ''"> #{orderNo},</if>
+         </trim>
+    </insert>
+
+    <update id="updateTMemberBalance" parameterType="TMemberBalance">
+        update t_member_balance
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="memberId != null and memberId != ''">member_id = #{memberId},</if>
+            <if test="changeAmount != null">change_amount = #{changeAmount},</if>
+            <if test="changeTime != null and changeTime != ''">change_time = #{changeTime},</if>
+            <if test="changeDirection != null">change_direction = #{changeDirection},</if>
+            <if test="orderId != null">order_id = #{orderId},</if>
+            <if test="tradeAmount != null">trade_amount = #{tradeAmount},</if>
+            <if test="orderNo != null  and orderNo != ''"> order_no = #{orderNo},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteTMemberBalanceById" parameterType="java.lang.Integer">
+        delete from t_member_balance where id = #{id}
+    </delete>
+
+    <delete id="deleteTMemberBalanceByIds" parameterType="java.lang.Integer">
+        delete from t_member_balance where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

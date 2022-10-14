@@ -56,4 +56,17 @@ public enum BusinessType
      * 清空数据
      */
     CLEAN,
+    /**
+     * 结算
+     */
+    SETTLEMENT,
+
+    /**
+     * 退款
+     */
+    REFUND,
+    /**
+     * 退款
+     */
+    CANCEL,
 }

@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jagng.admin.mapper.TWareMapper">
+    
+    <resultMap type="TWare" id="TWareResult">
+        <result property="id"    column="id"    />
+        <result property="wareName"    column="ware_name"    />
+        <result property="wareType"    column="ware_type"    />
+        <result property="wareNum"    column="ware_num"    />
+        <result property="wareContent"    column="ware_content"    />
+        <result property="version"    column="version"    />
+        <result property="wareImg"    column="ware_img"    />
+        <result property="warePrice"    column="ware_price"    />
+        <result property="wareCode"    column="ware_code"    />
+        <result property="wareTypeName"    column="ware_type_name"    />
+    </resultMap>
+
+    <sql id="selectTWareVo">
+        select id, ware_name, ware_type, ware_num, ware_content, version, ware_img, ware_price,ware_code from t_ware
+    </sql>
+
+    <select id="selectTWareList" parameterType="TWare" resultMap="TWareResult">
+        select
+        tw.id, tw.ware_name, tw.ware_type, tw.ware_num, tw.ware_content, tw.version, tw.ware_img, tw.ware_price,tw.ware_code,sdt.dict_label as ware_type_name
+        from t_ware tw
+        left join (select * from sys_dict_data sd where sd.dict_type = 'ware_type_dict' ) sdt on tw.ware_type = sdt.dict_value
+        <where>  
+            <if test="wareName != null  and wareName != ''"> and ware_name like concat('%', #{wareName}, '%')</if>
+            <if test="wareType != null  and wareType != ''"> and ware_type = #{wareType}</if>
+            <if test="wareNum != null "> and ware_num = #{wareNum}</if>
+            <if test="wareContent != null  and wareContent != ''"> and ware_content = #{wareContent}</if>
+            <if test="version != null  and version != ''"> and version = #{version}</if>
+            <if test="wareImg != null  and wareImg != ''"> and ware_img = #{wareImg}</if>
+            <if test="warePrice != null "> and ware_price = #{warePrice}</if>
+            <if test="wareCode != null  and wareCode != '' "> and ware_code = #{wareCode}</if>
+        </where>
+    </select>
+    
+    <select id="selectTWareById" parameterType="Integer" resultMap="TWareResult">
+        <include refid="selectTWareVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertTWare" parameterType="TWare">
+        insert into t_ware
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="wareName != null and wareName != ''">ware_name,</if>
+            <if test="wareType != null and wareType != ''">ware_type,</if>
+            <if test="wareNum != null">ware_num,</if>
+            <if test="wareContent != null">ware_content,</if>
+            <if test="version != null and version != ''">version,</if>
+            <if test="wareImg != null">ware_img,</if>
+            <if test="warePrice != null">ware_price,</if>
+            <if test="wareCode != null  and wareCode != '' "> ware_code,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="wareName != null and wareName != ''">#{wareName},</if>
+            <if test="wareType != null and wareType != ''">#{wareType},</if>
+            <if test="wareNum != null">#{wareNum},</if>
+            <if test="wareContent != null">#{wareContent},</if>
+            <if test="version != null and version != ''">#{version},</if>
+            <if test="wareImg != null">#{wareImg},</if>
+            <if test="warePrice != null">#{warePrice},</if>
+            <if test="wareCode != null  and wareCode != ''"> #{wareCode},</if>
+         </trim>
+    </insert>
+
+    <update id="updateTWare" parameterType="TWare">
+        update t_ware
+        <trim prefix="SET" suffixOverrides=",">
+            version = version+1,
+            <if test="wareName != null and wareName != ''">ware_name = #{wareName},</if>
+            <if test="wareType != null and wareType != ''">ware_type = #{wareType},</if>
+            <if test="wareNum != null">ware_num = #{wareNum},</if>
+            <if test="wareContent != null">ware_content = #{wareContent},</if>
+            <if test="wareImg != null">ware_img = #{wareImg},</if>
+            <if test="warePrice != null">ware_price = #{warePrice},</if>
+            <if test="wareCode != null  and wareCode != ''"> ware_code = #{wareCode},</if>
+        </trim>
+        where id = #{id} and version = #{version}
+    </update>
+
+    <delete id="deleteTWareById" parameterType="String">
+        delete from t_ware where id = #{id}
+    </delete>
+
+    <delete id="deleteTWareByIds" parameterType="String">
+        delete from t_ware where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jagng.admin.mapper.TMemberMapper">
+    
+    <resultMap type="TMember" id="TMemberResult">
+        <result property="id"    column="id"    />
+        <result property="customerName"    column="customer_name"    />
+        <result property="phone"    column="phone"    />
+        <result property="memberType"    column="member_type"    />
+        <result property="balance"    column="balance"    />
+        <result property="membershipTime"    column="membership_time"    />
+        <result property="memberTypeName"    column="member_type_name"    />
+    </resultMap>
+
+    <sql id="selectTMemberVo">
+        select id, customer_name, phone, member_type, balance, membership_time from t_member
+    </sql>
+
+    <select id="selectTMemberList" parameterType="TMember" resultMap="TMemberResult">
+        select
+            mb.id, mb.customer_name, mb.phone, mb.member_type, mb.balance, mb.membership_time ,sdt.dict_label as member_type_name
+        from t_member mb
+        left join (select * from sys_dict_data sd where sd.dict_type = 'member_type_dict' ) sdt on mb.member_type = sdt.dict_value
+        <where>  
+            <if test="customerName != null  and customerName != ''"> and customer_name like concat('%', #{customerName}, '%')</if>
+            <if test="phone != null  and phone != ''"> and phone like concat('%', #{phone}, '%') </if>
+            <if test="memberType != null  and memberType != ''"> and member_type = #{memberType}</if>
+            <if test="balance != null "> and balance = #{balance}</if>
+            <if test="membershipTime != null  and membershipTime != ''"> and membership_time = #{membershipTime}</if>
+        </where>
+    </select>
+    
+    <select id="selectTMemberById" parameterType="java.lang.Integer" resultMap="TMemberResult">
+        <include refid="selectTMemberVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertTMember" parameterType="TMember">
+        insert into t_member
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="customerName != null and customerName != ''">customer_name,</if>
+            <if test="phone != null and phone != ''">phone,</if>
+            <if test="memberType != null and memberType != ''">member_type,</if>
+            <if test="balance != null">balance,</if>
+            <if test="membershipTime != null and membershipTime != ''">membership_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="customerName != null and customerName != ''">#{customerName},</if>
+            <if test="phone != null and phone != ''">#{phone},</if>
+            <if test="memberType != null and memberType != ''">#{memberType},</if>
+            <if test="balance != null">#{balance},</if>
+            <if test="membershipTime != null and membershipTime != ''">#{membershipTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateTMember" parameterType="TMember">
+        update t_member
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="customerName != null and customerName != ''">customer_name = #{customerName},</if>
+            <if test="phone != null and phone != ''">phone = #{phone},</if>
+            <if test="memberType != null and memberType != ''">member_type = #{memberType},</if>
+            <if test="balance != null">balance = #{balance},</if>
+            <if test="membershipTime != null and membershipTime != ''">membership_time = #{membershipTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteTMemberById" parameterType="java.lang.Integer">
+        delete from t_member where id = #{id}
+    </delete>
+
+    <delete id="deleteTMemberByIds" parameterType="java.lang.Integer">
+        delete from t_member where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

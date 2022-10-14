@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jagng.admin.mapper.TOrderMapper">
+    
+    <resultMap type="TOrder" id="TOrderResult">
+        <result property="id"    column="id"    />
+        <result property="amount"    column="amount"    />
+        <result property="state"    column="state"    />
+        <result property="memberId"    column="member_id"    />
+        <result property="member"    column="member"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="orderNo"    column="order_no"  />
+        <result property="memberName"    column="member_name"    />
+        <result property="phone"    column="phone"    />
+    </resultMap>
+
+    <sql id="selectTOrderVo">
+        select id, amount, state, member_id, member, create_time,order_no from t_order
+    </sql>
+
+    <select id="selectTOrderList" parameterType="TOrder" resultMap="TOrderResult">
+        select
+            tod.id, tod.amount, tod.state, tod.member_id, tod.member, tod.create_time,tod.order_no ,tm.customer_name as member_name,tm.phone as phone
+        from t_order tod
+        left join t_member tm on tod.member_id = tm.id
+        <where>  
+            <if test="amount != null "> and amount = #{amount}</if>
+            <if test="state != null "> and state = #{state}</if>
+            <if test="memberId != null  and memberId != ''"> and member_id = #{memberId}</if>
+            <if test="member != null "> and member = #{member}</if>
+            <if test="orderNo != null  and orderNo != ''"> and order_no like concat('%',concat(#{orderNo},'%')) </if>
+            <if test="params.beginTime != null  and params.beginTime != ''"> and create_time <![CDATA[ >= ]]> #{params.beginTime}</if>
+            <if test="params.endTime != null  and params.endTime != ''"> and create_time <![CDATA[ <= ]]> #{params.endTime}</if>
+        </where>
+        order by tod.create_time desc
+    </select>
+    
+    <select id="selectTOrderById" parameterType="java.lang.Integer" resultMap="TOrderResult">
+        <include refid="selectTOrderVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertTOrder" parameterType="TOrder">
+        insert into t_order
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="amount != null">amount,</if>
+            <if test="state != null">state,</if>
+            <if test="memberId != null">member_id,</if>
+            <if test="member != null">member,</if>
+            <if test="createTime != null ">create_time,</if>
+            <if test="orderNo != null  and orderNo != ''"> order_no,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="amount != null">#{amount},</if>
+            <if test="state != null">#{state},</if>
+            <if test="memberId != null">#{memberId},</if>
+            <if test="member != null">#{member},</if>
+            <if test="createTime != null ">#{createTime},</if>
+            <if test="orderNo != null  and orderNo != ''"> #{orderNo}, </if>
+         </trim>
+    </insert>
+
+    <update id="updateTOrder" parameterType="TOrder">
+        update t_order
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="amount != null">amount = #{amount},</if>
+            <if test="state != null">state = #{state},</if>
+            <if test="memberId != null">member_id = #{memberId},</if>
+            <if test="member != null">member = #{member},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="orderNo != null  and orderNo != ''">  order_no = #{orderNo} ,</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteTOrderById" parameterType="java.lang.Integer">
+        delete from t_order where id = #{id}
+    </delete>
+
+    <delete id="deleteTOrderByIds" parameterType="java.lang.Integer">
+        delete from t_order where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>
