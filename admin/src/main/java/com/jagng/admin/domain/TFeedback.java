@@ -6,21 +6,21 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
 /**
- * 顾客反馈记录;对象 t_feeedback
+ * 顾客反馈记录;对象 t_feedback
  * 
  * @author ruoyi
  * @date 2022-10-10
  */
-public class TFeeedback extends BaseEntity
+public class TFeedback extends BaseEntity
 {
     private static final long serialVersionUID = 1L;
 
     /** 主键 */
-    private String id;
+    private Integer id;
 
     /** 订单id */
     @Excel(name = "订单id")
-    private String orderId;
+    private String orderNo;
 
     /** 反馈意见 */
     @Excel(name = "反馈意见")
@@ -30,24 +30,35 @@ public class TFeeedback extends BaseEntity
     @Excel(name = "质量等级;0：负面 1：中性  2：正面")
     private Long qualityLevel;
 
-    public void setId(String id) 
+    private String feedbackTime;
+
+
+    public String getFeedbackTime() {
+        return feedbackTime;
+    }
+
+    public void setFeedbackTime(String feedbackTime) {
+        this.feedbackTime = feedbackTime;
+    }
+
+    public String getOrderNo() {
+        return orderNo;
+    }
+
+    public void setOrderNo(String orderNo) {
+        this.orderNo = orderNo;
+    }
+
+    public void setId(Integer id)
     {
         this.id = id;
     }
 
-    public String getId() 
+    public Integer getId()
     {
         return id;
     }
-    public void setOrderId(String orderId) 
-    {
-        this.orderId = orderId;
-    }
 
-    public String getOrderId() 
-    {
-        return orderId;
-    }
     public void setFeedback(String feedback) 
     {
         this.feedback = feedback;
@@ -71,7 +82,7 @@ public class TFeeedback extends BaseEntity
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE)
             .append("id", getId())
-            .append("orderId", getOrderId())
+            .append("orderNo", getOrderNo())
             .append("feedback", getFeedback())
             .append("qualityLevel", getQualityLevel())
             .toString();

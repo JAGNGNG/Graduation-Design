@@ -3,6 +3,7 @@ package com.jagng.admin.service;
 import java.util.List;
 import com.jagng.admin.domain.TOrderDtl;
 import com.jagng.admin.dto.EmpInfoDTO;
+import com.jagng.admin.dto.SalaryDTO;
 
 /**
  * 订单明细;Service接口
@@ -59,6 +60,13 @@ public interface ITOrderDtlService
      * @return 结果
      */
     public int deleteTOrderDtlById(String id);
+
+    /**
+    * 统计员工提成金额
+    * @author JAGNG
+    * @date 2022/10/15 23:03
+    **/
+    public List<SalaryDTO> qryOrderDtlForSalary(String yearMonth);
 
 
 }

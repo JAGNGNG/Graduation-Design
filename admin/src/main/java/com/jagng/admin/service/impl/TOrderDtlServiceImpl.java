@@ -3,11 +3,14 @@ package com.jagng.admin.service.impl;
 import java.util.List;
 
 import com.jagng.admin.dto.EmpInfoDTO;
+import com.jagng.admin.dto.SalaryDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.jagng.admin.mapper.TOrderDtlMapper;
 import com.jagng.admin.domain.TOrderDtl;
 import com.jagng.admin.service.ITOrderDtlService;
+
+import javax.annotation.Resource;
 
 /**
  * 订单明细;Service业务层处理
@@ -18,7 +21,7 @@ import com.jagng.admin.service.ITOrderDtlService;
 @Service
 public class TOrderDtlServiceImpl implements ITOrderDtlService 
 {
-    @Autowired
+    @Resource
     private TOrderDtlMapper tOrderDtlMapper;
 
     /**
@@ -93,5 +96,8 @@ public class TOrderDtlServiceImpl implements ITOrderDtlService
         return tOrderDtlMapper.deleteTOrderDtlById(id);
     }
 
-
+    @Override
+    public List<SalaryDTO> qryOrderDtlForSalary(String yearMonth) {
+        return tOrderDtlMapper.qryOrderDtlForSalary(yearMonth);
+    }
 }

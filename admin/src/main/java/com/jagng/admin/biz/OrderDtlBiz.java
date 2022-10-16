@@ -42,7 +42,6 @@ public class OrderDtlBiz {
         TWare queryWareParam = new TWare();
         queryWareParam.setWareCode(addOrderWareParam.getWareCode());
         TWare ware = wareService.selectTWareList(queryWareParam).get(0);
-
         //非服务类产品库存数量需要更新
         if (!Objects.equals(ware.getWareType(), "service")) {
             if (Objects.isNull(addOrderWareParam.getWareNum()) || addOrderWareParam.getWareNum() == 0) {
@@ -59,15 +58,16 @@ public class OrderDtlBiz {
                 ware = wareService.selectTWareById(ware.getId());
             }
         }
+        //为方便记录订单金额,服务类产品默认产品数量为1
+        else {
+            addOrderWareParam.setWareNum(1);
+        }
 
         //添加订单明细数据
         BigDecimal detailedAmount = ware.getWarePrice().multiply(new BigDecimal(addOrderWareParam.getWareNum()));
         for (Integer empId : addOrderWareParam.getEmpIds()) {
-            TOrderDtl orderDtl = new TOrderDtl();
             //服务类订单产品需要更新服务员工排班表
             if (Objects.equals(ware.getWareType(), "service")) {
-                //设定订单明细数量
-                orderDtl.setWareNum(1);
                 //更新服务人员排班优先级
                 TEmpInfo empInfo = empInfoService.selectTEmpInfoById(empId);
                 EmpInfoDTO empInfoDTO = empInfoService.selectEmpInfoDTO(empInfo.getPhone());
@@ -91,11 +91,11 @@ public class OrderDtlBiz {
                     empPlan.setPriority(empPlan.getPriority()+maxPriority);
                     planService.updateTSchedulingPlan(empPlan);
                 }
-            }else {
-                orderDtl.setWareNum(addOrderWareParam.getWareNum());
             }
             //增加订单明细信息
+            TOrderDtl orderDtl = new TOrderDtl();
             orderDtl.setOrderNo(addOrderWareParam.getOrderNo());
+            orderDtl.setWareNum(addOrderWareParam.getWareNum());
             orderDtl.setDetailedAmount(detailedAmount);
             orderDtl.setWareCode(addOrderWareParam.getWareCode());
             orderDtl.setEmpId(empId);

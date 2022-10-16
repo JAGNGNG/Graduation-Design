@@ -26,6 +26,7 @@ public class EmpBiz {
 
     @Transactional(rollbackFor = Exception.class)
     public AjaxResult addEmp(TEmpInfo tEmpInfo) {
+        //新增系统用户
         SysUser user = new SysUser();
         user.setNickName(tEmpInfo.getName());
         user.setUserName(tEmpInfo.getPhone());
@@ -45,6 +46,7 @@ public class EmpBiz {
             return AjaxResult.error("新增用户'" + user.getUserName() + "'失败，邮箱账号已存在");
         }
         userService.insertUser(user);
+        //新增员工信息
         tEmpInfo.setEntryTime(LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
         return empInfoService.insertTEmpInfo(tEmpInfo) > 0 ? AjaxResult.success() : AjaxResult.error();
     }

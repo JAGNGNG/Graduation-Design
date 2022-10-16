@@ -150,12 +150,12 @@
                 <version>${kaptcha.version}</version>
             </dependency>
 
-            <!-- 定时任务-->
-            <dependency>
-                <groupId>com.jagng</groupId>
-                <artifactId>quartz</artifactId>
-                <version>${graduation.version}</version>
-            </dependency>
+<!--            &lt;!&ndash; 定时任务&ndash;&gt;-->
+<!--            <dependency>-->
+<!--                <groupId>com.jagng</groupId>-->
+<!--                <artifactId>quartz</artifactId>-->
+<!--                <version>${graduation.version}</version>-->
+<!--            </dependency>-->
 
             <!-- 代码生成-->
             <dependency>
@@ -193,6 +193,7 @@
         <module>framework</module>
         <module>system</module>
         <module>common</module>
+        <module>generator</module>
     </modules>
     <packaging>pom</packaging>
 

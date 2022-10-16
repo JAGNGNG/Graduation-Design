@@ -69,4 +69,8 @@ public enum BusinessType
      * 退款
      */
     CANCEL,
+    /**
+     * 充值
+     */
+    RECHARGE,
 }

@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jagng.admin.mapper.TFeedbackMapper">
+    
+    <resultMap type="TFeedback" id="TFeedbackResult">
+        <result property="id"    column="id"    />
+        <result property="orderNo"    column="order_no"    />
+        <result property="feedback"    column="feedback"    />
+        <result property="qualityLevel"    column="quality_level"    />
+        <result property="feedbackTime"    column="feedback_time"    />
+    </resultMap>
+
+    <sql id="selectTFeedbackVo">
+        select id, order_no, feedback, quality_level,feedback_time from t_feedback
+    </sql>
+
+    <select id="selectTFeedbackList" parameterType="TFeedback" resultMap="TFeedbackResult">
+        <include refid="selectTFeedbackVo"/>
+        <where>  
+            <if test="orderNo != null  and orderNo != ''"> and order_no like concat('%',concat(#{orderNo},'%')) </if>
+            <if test="feedback != null  and feedback != ''"> and feedback = #{feedback}</if>
+            <if test="qualityLevel != null "> and quality_level = #{qualityLevel}</if>
+            <if test="feedbackTime != null and feedbackTime != ''"> and feedback_time = #{feedbackTime}</if>
+            <if test="params.beginTime != null  and params.beginTime != ''"> and feedback_time <![CDATA[ >= ]]> #{params.beginTime}</if>
+            <if test="params.endTime != null  and params.endTime != ''"> and feedback_time <![CDATA[ <= ]]> #{params.endTime}</if>
+        </where>
+    </select>
+    
+    <select id="selectTFeedbackById" parameterType="java.lang.Integer" resultMap="TFeedbackResult">
+        <include refid="selectTFeedbackVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertTFeedback" parameterType="TFeedback">
+        insert into t_feedback
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="orderNo != null and orderNo != ''">order_no,</if>
+            <if test="feedback != null and feedback != ''">feedback,</if>
+            <if test="qualityLevel != null">quality_level,</if>
+            <if test="feedbackTime != null and feedbackTime != ''">feedback_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="orderNo != null and orderNo != ''">#{orderNo},</if>
+            <if test="feedback != null and feedback != ''">#{feedback},</if>
+            <if test="qualityLevel != null">#{qualityLevel},</if>
+            <if test="feedbackTime != null and feedbackTime != ''"> #{feedbackTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateTFeedback" parameterType="TFeedback">
+        update t_feedback
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="orderNo != null and orderNo != ''">order_no = #{orderNo},</if>
+            <if test="feedback != null and feedback != ''">feedback = #{feedback},</if>
+            <if test="qualityLevel != null">quality_level = #{qualityLevel},</if>
+            <if test="feedbackTime != null and feedbackTime != ''">feedback_time = #{feedbackTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteTFeedbackById" parameterType="java.lang.Integer">
+        delete from t_feedback where id = #{id}
+    </delete>
+
+    <delete id="deleteTFeedbackByIds" parameterType="java.lang.Integer">
+        delete from t_feedback where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

@@ -5,8 +5,10 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 
 import com.jagng.admin.biz.MemberBiz;
+import com.jagng.admin.vo.MemberRechargeParam;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -106,5 +108,12 @@ public class TMemberController extends BaseController
     public AjaxResult remove(@PathVariable Integer[] ids)
     {
         return toAjax(tMemberService.deleteTMemberByIds(ids));
+    }
+
+
+    @Log(title = "会员", businessType = BusinessType.RECHARGE)
+    @PostMapping("/recharge")
+    public AjaxResult recharge(@RequestBody MemberRechargeParam rechargeParam){
+        return memberBiz.recharge(rechargeParam);
     }
 }

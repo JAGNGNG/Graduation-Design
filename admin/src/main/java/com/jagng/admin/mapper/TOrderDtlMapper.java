@@ -2,6 +2,8 @@ package com.jagng.admin.mapper;
 
 import java.util.List;
 import com.jagng.admin.domain.TOrderDtl;
+import com.jagng.admin.dto.SalaryDTO;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * 订单明细;Mapper接口
@@ -58,4 +60,11 @@ public interface TOrderDtlMapper
      * @return 结果
      */
     public int deleteTOrderDtlByIds(String[] ids);
+
+    /**
+    * 查询员工关联
+    * @author JAGNG
+    * @date 2022/10/15 22:54
+    **/
+    public List<SalaryDTO> qryOrderDtlForSalary(@Param("yearMonth") String yearMonth);
 }

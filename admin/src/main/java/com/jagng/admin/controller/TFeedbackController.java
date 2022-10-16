@@ -16,8 +16,8 @@ import com.jagng.common.annotation.Log;
 import com.jagng.common.core.controller.BaseController;
 import com.jagng.common.core.domain.AjaxResult;
 import com.jagng.common.enums.BusinessType;
-import com.jagng.admin.domain.TFeeedback;
-import com.jagng.admin.service.ITFeeedbackService;
+import com.jagng.admin.domain.TFeedback;
+import com.jagng.admin.service.ITFeedbackService;
 import com.jagng.common.utils.poi.ExcelUtil;
 import com.jagng.common.core.page.TableDataInfo;
 
@@ -28,77 +28,77 @@ import com.jagng.common.core.page.TableDataInfo;
  * @date 2022-10-10
  */
 @RestController
-@RequestMapping("/admin/feeedback")
-public class TFeeedbackController extends BaseController
+@RequestMapping("/admin/feedback")
+public class TFeedbackController extends BaseController
 {
     @Autowired
-    private ITFeeedbackService tFeeedbackService;
+    private ITFeedbackService tFeedbackService;
 
     /**
      * 查询顾客反馈记录;列表
      */
-    @PreAuthorize("@ss.hasPermi('admin:feeedback:list')")
+    @PreAuthorize("@ss.hasPermi('admin:feedback:list')")
     @GetMapping("/list")
-    public TableDataInfo list(TFeeedback tFeeedback)
+    public TableDataInfo list(TFeedback tFeedback)
     {
         startPage();
-        List<TFeeedback> list = tFeeedbackService.selectTFeeedbackList(tFeeedback);
+        List<TFeedback> list = tFeedbackService.selectTFeedbackList(tFeedback);
         return getDataTable(list);
     }
 
     /**
      * 导出顾客反馈记录;列表
      */
-    @PreAuthorize("@ss.hasPermi('admin:feeedback:export')")
+    @PreAuthorize("@ss.hasPermi('admin:feedback:export')")
     @Log(title = "顾客反馈记录;", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
-    public void export(HttpServletResponse response, TFeeedback tFeeedback)
+    public void export(HttpServletResponse response, TFeedback tFeedback)
     {
-        List<TFeeedback> list = tFeeedbackService.selectTFeeedbackList(tFeeedback);
-        ExcelUtil<TFeeedback> util = new ExcelUtil<TFeeedback>(TFeeedback.class);
+        List<TFeedback> list = tFeedbackService.selectTFeedbackList(tFeedback);
+        ExcelUtil<TFeedback> util = new ExcelUtil<TFeedback>(TFeedback.class);
         util.exportExcel(response, list, "顾客反馈记录;数据");
     }
 
     /**
      * 获取顾客反馈记录;详细信息
      */
-    @PreAuthorize("@ss.hasPermi('admin:feeedback:query')")
+    @PreAuthorize("@ss.hasPermi('admin:feedback:query')")
     @GetMapping(value = "/{id}")
-    public AjaxResult getInfo(@PathVariable("id") String id)
+    public AjaxResult getInfo(@PathVariable("id") Integer id)
     {
-        return AjaxResult.success(tFeeedbackService.selectTFeeedbackById(id));
+        return AjaxResult.success(tFeedbackService.selectTFeedbackById(id));
     }
 
     /**
      * 新增顾客反馈记录;
      */
-    @PreAuthorize("@ss.hasPermi('admin:feeedback:add')")
+    @PreAuthorize("@ss.hasPermi('admin:feedback:add')")
     @Log(title = "顾客反馈记录;", businessType = BusinessType.INSERT)
     @PostMapping
-    public AjaxResult add(@RequestBody TFeeedback tFeeedback)
+    public AjaxResult add(@RequestBody TFeedback tFeedback)
     {
-        return toAjax(tFeeedbackService.insertTFeeedback(tFeeedback));
+        return toAjax(tFeedbackService.insertTFeedback(tFeedback));
     }
 
     /**
      * 修改顾客反馈记录;
      */
-    @PreAuthorize("@ss.hasPermi('admin:feeedback:edit')")
+    @PreAuthorize("@ss.hasPermi('admin:feedback:edit')")
     @Log(title = "顾客反馈记录;", businessType = BusinessType.UPDATE)
     @PutMapping
-    public AjaxResult edit(@RequestBody TFeeedback tFeeedback)
+    public AjaxResult edit(@RequestBody TFeedback tFeedback)
     {
-        return toAjax(tFeeedbackService.updateTFeeedback(tFeeedback));
+        return toAjax(tFeedbackService.updateTFeedback(tFeedback));
     }
 
     /**
      * 删除顾客反馈记录;
      */
-    @PreAuthorize("@ss.hasPermi('admin:feeedback:remove')")
+    @PreAuthorize("@ss.hasPermi('admin:feedback:remove')")
     @Log(title = "顾客反馈记录;", businessType = BusinessType.DELETE)
 	@DeleteMapping("/{ids}")
-    public AjaxResult remove(@PathVariable String[] ids)
+    public AjaxResult remove(@PathVariable Integer[] ids)
     {
-        return toAjax(tFeeedbackService.deleteTFeeedbackByIds(ids));
+        return toAjax(tFeedbackService.deleteTFeedbackByIds(ids));
     }
 }

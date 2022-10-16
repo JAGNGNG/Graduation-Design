@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jagng.admin.mapper.TEmpSalaryMapper">
+    
+    <resultMap type="TEmpSalary" id="TEmpSalaryResult">
+        <result property="id"    column="id"    />
+        <result property="empId"    column="emp_id"    />
+        <result property="base"    column="base"    />
+        <result property="salaryMonth"    column="salary_month"    />
+        <result property="salary"    column="salary"    />
+        <result property="monthCommission"    column="month_commission"    />
+        <result property="empName"    column="emp_name"    />
+    </resultMap>
+
+    <sql id="selectTEmpSalaryVo">
+        select id, emp_id, base, salary_month, salary, month_commission from t_emp_salary
+    </sql>
+
+    <select id="selectTEmpSalaryList" parameterType="TEmpSalary" resultMap="TEmpSalaryResult">
+        select
+            tes.id, tes.emp_id, tes.base, tes.salary_month, tes.salary, tes.month_commission ,tei.name as emp_name
+        from t_emp_salary tes
+        left join t_emp_info tei on tei.id = tes.emp_id
+        <where>  
+            <if test="empId != null "> and emp_id = #{empId}</if>
+            <if test="base != null"> and base = #{base}</if>
+            <if test="salaryMonth != null  and salaryMonth != ''"> and salary_month = #{salaryMonth}</if>
+            <if test="salary != null "> and salary = #{salary}</if>
+            <if test="monthCommission != null "> and month_commission = #{monthCommission}</if>
+        </where>
+        order by tes.salary_month desc
+    </select>
+    
+    <select id="selectTEmpSalaryById" parameterType="Long" resultMap="TEmpSalaryResult">
+        <include refid="selectTEmpSalaryVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertTEmpSalary" parameterType="TEmpSalary" useGeneratedKeys="true" keyProperty="id">
+        insert into t_emp_salary
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="empId != null">emp_id,</if>
+            <if test="base != null ">base,</if>
+            <if test="salaryMonth != null and salaryMonth != ''">salary_month,</if>
+            <if test="salary != null">salary,</if>
+            <if test="monthCommission != null">month_commission,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="empId != null">#{empId},</if>
+            <if test="base != null ">#{base},</if>
+            <if test="salaryMonth != null and salaryMonth != ''">#{salaryMonth},</if>
+            <if test="salary != null">#{salary},</if>
+            <if test="monthCommission != null">#{monthCommission},</if>
+         </trim>
+    </insert>
+
+    <update id="updateTEmpSalary" parameterType="TEmpSalary">
+        update t_emp_salary
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="empId != null">emp_id = #{empId},</if>
+            <if test="base != null ">base = #{base},</if>
+            <if test="salaryMonth != null and salaryMonth != ''">salary_month = #{salaryMonth},</if>
+            <if test="salary != null">salary = #{salary},</if>
+            <if test="monthCommission != null">month_commission = #{monthCommission},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteTEmpSalaryById" parameterType="Long">
+        delete from t_emp_salary where id = #{id}
+    </delete>
+
+    <delete id="deleteTEmpSalaryByIds" parameterType="String">
+        delete from t_emp_salary where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

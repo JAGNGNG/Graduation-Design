@@ -87,4 +87,25 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             #{id}
         </foreach>
     </delete>
+
+    <select id="qryOrderDtlForSalary" parameterType="String" resultType="com.jagng.admin.dto.SalaryDTO">
+        WITH commissionTemp AS (
+            SELECT
+                sum( tod.commission ) AS commission,
+                tod.emp_id AS empId
+            FROM
+                t_order_dtl tod
+                    LEFT JOIN t_order td ON td.order_no = tod.order_no
+            WHERE
+                td.state = 1 and date_format(td.create_time,'%Y-%m') = #{yearMonth}
+            GROUP BY
+                tod.emp_id
+        ) SELECT
+              ct.empId,
+              ct.commission,
+              tmi.base
+        FROM
+            commissionTemp ct
+            LEFT JOIN t_emp_info tmi ON tmi.id = ct.empId
+    </select>
 </mapper>
